@@ -1,1 +1,34 @@
 
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Copy files to VPS
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        password: ${{ secrets.VPS_PASS }}
+        source: "."
+        target: "/root/bot"
+
+    - name: Restart bot
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        password: ${{ secrets.VPS_PASS }}
+        script: |
+          cd /root/bot
+          pkill -f "python3 main.py" || true
+          screen -dmS twitchbot bash -c 'cd /root/bot && python3 main.py'
+          echo "✅ Bot restarted successfully"
