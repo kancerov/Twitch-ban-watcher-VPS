@@ -31,4 +31,4 @@ jobs:
           cd /root/bot
           pkill -f "python3 main.py" || true
           screen -dmS twitchbot bash -c 'cd /root/bot && python3 main.py'
-          echo "✅ Bot restarted successfully"
+          echo "✅ Bot restarted successfully!"
